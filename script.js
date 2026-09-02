@@ -74,7 +74,7 @@ const materiales = [
         nombre: "ESP32",
         categoria: "Microcontroladores",
         unidad: "Unidad",
-        imagen: "esp32.jpg",
+        imagen: "imagenes/esp32.jpg",
 
         descripcion: "Microcontrolador con conectividad WiFi y Bluetooth para desarrollar proyectos electrónicos y de automatización.",
 
@@ -86,7 +86,7 @@ const materiales = [
         nombre: "Servomotor SG90",
         categoria: "Actuadores",
         unidad: "Unidad",
-        imagen: "SG90.jpg",
+        imagen: "imagenes/sg90.jpg",
 
         descripcion: "Pequeño servomotor que permite controlar la posición angular de su eje.",
 
@@ -98,7 +98,7 @@ const materiales = [
         nombre: "Protoboard",
         categoria: "Prototipado",
         unidad: "Unidad",
-        imagen: "PROTOBOARD.jpg",
+        imagen: "imagenes/protoboard.jpg",
 
         descripcion: "Placa utilizada para construir y probar circuitos electrónicos sin necesidad de soldadura.",
 
@@ -110,7 +110,7 @@ const materiales = [
         nombre: "LED",
         categoria: "Electrónica",
         unidad: "Unidad",
-        imagen: "LED.jpg",
+        imagen: "imagenes/led.jpg",
 
         descripcion: "Diodo emisor de luz utilizado para iluminación y señalización en circuitos electrónicos.",
 
@@ -122,7 +122,7 @@ const materiales = [
         nombre: "Sensor TCTR5000",
         categoria: "Sensores",
         unidad: "Unidad",
-        imagen: "TCRT5000.jpg",
+        imagen: "imagenes/TCRT5000.jpg",
 
         descripcion: "Sensor infrarrojo utilizado para detectar diferencias de reflexión sobre una superficie.",
 
@@ -286,22 +286,64 @@ function actualizarContadorCarrito() {
 }
 function verCarrito() {
 
-    // Mostrar el carrito primero
-    const pantallaCarrito = document.getElementById("pantalla-carrito");
-    const pantallaPrincipal = document.getElementById("pantalla-principal");
+    // Ocultar pantalla principal
+    document.getElementById("pantalla-principal").style.display = "none";
 
-    pantallaPrincipal.style.display = "none";
-    pantallaCarrito.style.display = "block";
+    // Mostrar pantalla del carrito
+    document.getElementById("pantalla-carrito").style.display = "block";
 
-    // Prueba
+    // Espacio donde aparecerán los materiales
     const contenido = document.getElementById("contenido-carrito");
 
-    contenido.innerHTML = `
-        <h2>PRUEBA DEL CARRITO</h2>
-        <p>La pantalla está funcionando correctamente.</p>
-        <p>Tipos de materiales: ${carrito.length}</p>
-    `;
+    // Limpiar contenido anterior
+    contenido.innerHTML = "";
+
+    // Revisar si el carrito está vacío
+    if (carrito.length === 0) {
+
+        contenido.innerHTML = `
+            <p>🛒 Tu carrito está vacío.</p>
+        `;
+
+        return;
+    }
+
+    // Mostrar cada material
+    carrito.forEach(function(material) {
+
+        contenido.innerHTML += `
+
+            <div class="tarjeta-carrito">
+
+                <img 
+                    src="${material.imagen}" 
+                    alt="${material.nombre}"
+                >
+
+                <div class="informacion-carrito">
+
+                    <h3>${material.nombre}</h3>
+
+                    <p>
+                        <strong>Categoría:</strong>
+                        ${material.categoria}
+                    </p>
+
+                    <p>
+                        <strong>Cantidad solicitada:</strong>
+                        ${material.cantidad} ${material.unidad}
+                    </p>
+
+                </div>
+
+            </div>
+
+        `;
+
+    });
+
 }
+
 function volverCatalogo() {
 
     // Ocultar carrito
