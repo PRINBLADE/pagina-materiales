@@ -45,12 +45,18 @@
 
             <h1>🤖 Sistema de Solicitud de Materiales</h1>
 
-            <div>
+            <div class="usuario-menu">
+
                 👤 <span id="nombre-profesor"></span>
+
+                <button onclick="verCarrito()">
+                    🛒 Mi carrito (<span id="contador-carrito">0</span>)
+                </button>
 
                 <button onclick="cerrarSesion()">
                     Cerrar sesión
                 </button>
+
             </div>
 
         </header>
@@ -74,7 +80,32 @@
 
     </div>
 
+<!-- PANTALLA DEL CARRITO -->
+<div id="pantalla-carrito" style="display: none;">
 
+    <header>
+
+        <h1>🛒 Mi carrito</h1>
+
+        <button onclick="volverCatalogo()">
+            ← Volver al catálogo
+        </button>
+
+    </header>
+
+    <main>
+
+        <h2>Materiales seleccionados</h2>
+
+        <div id="contenido-carrito">
+
+            <!-- JavaScript mostrará aquí los materiales -->
+
+        </div>
+
+    </main>
+
+</div>
     <script src="script.js"></script>
 
 </body>
