@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,11 +12,71 @@
 
 <body>
 
-    <h1>🤖 Sistema de Solicitud de Materiales</h1>
+    <!-- PANTALLA DE LOGIN -->
+    <div id="pantalla-login" class="login-container">
 
-    <p>Demo para la carga y consolidación de materiales de robótica.</p>
+        <h1>🤖 Solicitud de Materiales</h1>
+
+        <p>Ingresa tus datos para acceder al sistema.</p>
+
+        <div class="login-box">
+
+            <label for="usuario">Usuario</label>
+            <input type="number" id="usuario" placeholder="Ejemplo: 1">
+
+            <label for="contrasena">Contraseña</label>
+            <input type="password" id="contrasena" placeholder="Ejemplo: 1">
+
+            <button onclick="iniciarSesion()">
+                INGRESAR
+            </button>
+
+            <p id="mensaje"></p>
+
+        </div>
+
+    </div>
+
+
+    <!-- PANTALLA PRINCIPAL -->
+    <div id="pantalla-principal" style="display: none;">
+
+        <header>
+
+            <h1>🤖 Sistema de Solicitud de Materiales</h1>
+
+            <div>
+                👤 <span id="nombre-profesor"></span>
+
+                <button onclick="cerrarSesion()">
+                    Cerrar sesión
+                </button>
+            </div>
+
+        </header>
+
+
+        <main>
+
+            <h2>📦 Catálogo de materiales</h2>
+
+            <p>
+                Aquí aparecerán los materiales disponibles para solicitar.
+            </p>
+
+            <div id="catalogo">
+
+                <p>Próximamente veremos aquí los materiales.</p>
+
+            </div>
+
+        </main>
+
+    </div>
+
 
     <script src="script.js"></script>
 
 </body>
+
 </html>
