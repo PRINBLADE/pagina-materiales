@@ -189,3 +189,72 @@ main {
     cursor: pointer;
 
 }
+/* SELECTOR DE CANTIDAD */
+
+.selector-cantidad {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin: 15px 0;
+}
+
+.selector-cantidad button {
+    width: 40px;
+    height: 40px;
+
+    padding: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 20px;
+}
+
+.selector-cantidad span {
+    min-width: 30px;
+    text-align: center;
+
+    font-size: 18px;
+    font-weight: bold;
+}
+/* =========================
+   CARRITO
+========================= */
+
+.tarjeta-carrito {
+
+    background: white;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 25px;
+
+    padding: 20px;
+
+    margin-bottom: 20px;
+
+    border-radius: 10px;
+
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+
+}
+
+.tarjeta-carrito img {
+
+    width: 120px;
+
+    height: 120px;
+
+    object-fit: contain;
+
+}
+
+.informacion-carrito {
+
+    flex: 1;
+
+}
