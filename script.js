@@ -74,7 +74,7 @@ const materiales = [
         nombre: "ESP32",
         categoria: "Microcontroladores",
         unidad: "Unidad",
-        imagen: "imagenes/esp32.jpg",
+        imagen: "esp32.jpg",
 
         descripcion: "Microcontrolador con conectividad WiFi y Bluetooth para desarrollar proyectos electrónicos y de automatización.",
 
@@ -86,7 +86,7 @@ const materiales = [
         nombre: "Servomotor SG90",
         categoria: "Actuadores",
         unidad: "Unidad",
-        imagen: "imagenes/sg90.jpg",
+        imagen: "SG90.jpg",
 
         descripcion: "Pequeño servomotor que permite controlar la posición angular de su eje.",
 
@@ -98,7 +98,7 @@ const materiales = [
         nombre: "Protoboard",
         categoria: "Prototipado",
         unidad: "Unidad",
-        imagen: "imagenes/protoboard.jpg",
+        imagen: "PROTOBOARD.jpg",
 
         descripcion: "Placa utilizada para construir y probar circuitos electrónicos sin necesidad de soldadura.",
 
@@ -110,7 +110,7 @@ const materiales = [
         nombre: "LED",
         categoria: "Electrónica",
         unidad: "Unidad",
-        imagen: "imagenes/led.jpg",
+        imagen: "LED.jpg",
 
         descripcion: "Diodo emisor de luz utilizado para iluminación y señalización en circuitos electrónicos.",
 
