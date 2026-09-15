@@ -86,7 +86,9 @@
     <header>
 
         <h1>🛒 Mi carrito</h1>
-
+        <button onclick="verConsolidado()">
+    📋 Ver consolidado
+</button>
         <button onclick="volverCatalogo()">
             ← Volver al catálogo
         </button>
@@ -95,17 +97,54 @@
 
     <main>
 
-        <h2>Materiales seleccionados</h2>
+    <h2>Materiales seleccionados</h2>
 
-        <div id="contenido-carrito">
+    <div id="contenido-carrito">
+        <!-- JavaScript mostrará aquí los materiales -->
+    </div>
 
-            <!-- JavaScript mostrará aquí los materiales -->
+    <form id="form-confirmar" onsubmit="confirmarSolicitud(event)">
+
+        <button type="submit">
+            ✅ Confirmar solicitud
+        </button>
+
+    </form>
+
+</main>
+
+</div>
+<!-- PANTALLA DEL CONSOLIDADO -->
+<div id="pantalla-consolidado" style="display: none;">
+
+    <header>
+
+        <h1>📋 Consolidado de materiales</h1>
+
+        <button onclick="volverCarrito()">
+            ← Volver al carrito
+        </button>
+        <button onclick="exportarPedido()">
+    📥 Exportar pedido
+</button>
+
+    </header>
+
+    <main>
+
+        <h2>Materiales solicitados</h2>
+
+        <div id="contenido-consolidado">
+
+            <p>Cargando solicitudes...</p>
 
         </div>
 
     </main>
 
 </div>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js"></script>
 
 </body>
