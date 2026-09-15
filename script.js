@@ -1,3 +1,15 @@
+// ==============================
+// CONEXIÓN CON SUPABASE
+// ==============================
+
+const SUPABASE_URL = "https://rczrrxpgelhkhuvuexgz.supabase.co";
+
+const SUPABASE_KEY = "sb_publishable_J18eh2-Gz135sEe-sjrtGQ_wxoFFvy5";
+
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
 function iniciarSesion() {
 
     // Obtener lo que escribió el usuario
@@ -24,7 +36,8 @@ function iniciarSesion() {
 
     // Verificar si existe el profesor
     if (profesores[usuario] && profesores[usuario].contraseña === contrasena) {
-
+profesorActualId = usuario;
+profesorActualNombre = profesores[usuario].nombre;
         // Mostrar el nombre del profesor
         document.getElementById("nombre-profesor").innerHTML =
             profesores[usuario].nombre;
@@ -74,7 +87,7 @@ const materiales = [
         nombre: "ESP32",
         categoria: "Microcontroladores",
         unidad: "Unidad",
-        imagen: "esp32.jpg",
+        imagen: "imagenes/esp32.jpg",
 
         descripcion: "Microcontrolador con conectividad WiFi y Bluetooth para desarrollar proyectos electrónicos y de automatización.",
 
@@ -86,7 +99,7 @@ const materiales = [
         nombre: "Servomotor SG90",
         categoria: "Actuadores",
         unidad: "Unidad",
-        imagen: "SG90.jpg",
+        imagen: "imagenes/sg90.jpg",
 
         descripcion: "Pequeño servomotor que permite controlar la posición angular de su eje.",
 
@@ -98,7 +111,7 @@ const materiales = [
         nombre: "Protoboard",
         categoria: "Prototipado",
         unidad: "Unidad",
-        imagen: "PROTOBOARD.jpg",
+        imagen: "imagenes/protoboard.jpg",
 
         descripcion: "Placa utilizada para construir y probar circuitos electrónicos sin necesidad de soldadura.",
 
@@ -110,7 +123,7 @@ const materiales = [
         nombre: "LED",
         categoria: "Electrónica",
         unidad: "Unidad",
-        imagen: "LED.jpg",
+        imagen: "imagenes/led.jpg",
 
         descripcion: "Diodo emisor de luz utilizado para iluminación y señalización en circuitos electrónicos.",
 
@@ -135,6 +148,9 @@ const materiales = [
 
 let carrito = [];
 let cantidades = {};
+
+let profesorActualId = "";
+let profesorActualNombre = "";
 
 function mostrarCatalogo() {
 
@@ -324,10 +340,32 @@ function verCarrito() {
 
                     <h3>${material.nombre}</h3>
 
-                    <p>
-                        <strong>Categoría:</strong>
-                        ${material.categoria}
-                    </p>
+                   <p><strong>Cantidad solicitada:</strong></p>
+
+<div class="selector-cantidad-carrito">
+
+    <button onclick="cambiarCantidadCarrito('${material.id}', -1)">
+        −
+    </button>
+
+    <span>
+        ${material.cantidad}
+    </span>
+
+    <button onclick="cambiarCantidadCarrito('${material.id}', 1)">
+        +
+    </button>
+
+</div>
+
+<p>${material.unidad}</p>
+
+<button 
+    class="boton-eliminar"
+    onclick="eliminarDelCarrito('${material.id}')"
+>
+    🗑️ Eliminar material
+</button>
 
                     <p>
                         <strong>Cantidad solicitada:</strong>
@@ -351,5 +389,385 @@ function volverCatalogo() {
 
     // Mostrar catálogo
     document.getElementById("pantalla-principal").style.display = "block";
+
+}
+function cambiarCantidadCarrito(id, cambio) {
+
+    const material = carrito.find(function(item) {
+        return item.id === id;
+    });
+
+    if (!material) return;
+
+    material.cantidad += cambio;
+
+    // No permitir cantidades menores de 1
+    if (material.cantidad < 1) {
+        material.cantidad = 1;
+    }
+
+    // Volver a mostrar el carrito actualizado
+    verCarrito();
+
+}
+function eliminarDelCarrito(id) {
+
+    carrito = carrito.filter(function(item) {
+        return item.id !== id;
+    });
+
+    // Actualizar contador
+    actualizarContadorCarrito();
+
+    // Volver a mostrar el carrito
+    verCarrito();
+
+}
+async function confirmarSolicitud(event) {
+
+    event.preventDefault();
+
+    if (carrito.length === 0) {
+        alert("🛒 El carrito está vacío.");
+        return;
+    }
+
+    const solicitudes = carrito.map(function(material) {
+
+        return {
+            profesor_id: profesorActualId,
+            profesor_nombre: profesorActualNombre,
+            material_id: material.id,
+            material_nombre: material.nombre,
+            categoria: material.categoria,
+            cantidad: material.cantidad
+        };
+
+    });
+
+    console.log("Solicitudes a enviar:", solicitudes);
+
+    const { data, error } = await supabaseClient
+        .from("solicitudes")
+        .insert(solicitudes);
+
+    if (error) {
+
+        console.error("Error al guardar:", error);
+
+        alert("❌ No se pudo guardar la solicitud.");
+
+        return;
+    }
+
+    alert("✅ Solicitud enviada correctamente.");
+
+    carrito = [];
+
+    actualizarContadorCarrito();
+
+    verCarrito();
+
+}
+console.log("Supabase conectado:", supabaseClient);
+async function verConsolidado() {
+
+    // Ocultar carrito
+    document.getElementById("pantalla-carrito").style.display = "none";
+
+    // Mostrar consolidado
+    document.getElementById("pantalla-consolidado").style.display = "block";
+
+    const contenido = document.getElementById("contenido-consolidado");
+
+    contenido.innerHTML = "<p>Cargando solicitudes...</p>";
+
+    // Obtener solicitudes de Supabase
+    const { data, error } = await supabaseClient
+        .from("solicitudes")
+        .select("*");
+
+    if (error) {
+
+        console.error("Error al consultar solicitudes:", error);
+
+        contenido.innerHTML =
+            "<p>❌ No se pudieron cargar las solicitudes.</p>";
+
+        return;
+    }
+
+    console.log("Solicitudes recibidas:", data);
+
+    // Verificar si existen solicitudes
+    if (data.length === 0) {
+
+        contenido.innerHTML =
+            "<p>📋 No hay solicitudes registradas.</p>";
+
+        return;
+    }
+
+    // ==============================
+    // CONSOLIDAR POR MATERIAL
+    // ==============================
+
+    const consolidado = {};
+
+    data.forEach(function(solicitud) {
+
+        const idMaterial = solicitud.material_id;
+
+        if (!consolidado[idMaterial]) {
+
+           if (!consolidado[idMaterial]) {
+
+    consolidado[idMaterial] = {
+        id: solicitud.material_id,
+        nombre: solicitud.material_nombre,
+        categoria: solicitud.categoria,
+        cantidad: 0,
+        docentes: []
+    };
+
+}
+
+        }
+
+        consolidado[idMaterial].cantidad += solicitud.cantidad;
+        consolidado[idMaterial].docentes.push({
+    nombre: solicitud.profesor_nombre,
+    cantidad: solicitud.cantidad
+});
+    });
+// ==============================
+// MOSTRAR CONSOLIDADO
+// ==============================
+
+contenido.innerHTML = "";
+
+Object.values(consolidado).forEach(function(material) {
+
+    // Buscar la información completa en el catálogo
+    const informacionMaterial = materiales.find(function(item) {
+        return item.id === material.id;
+    });
+
+    if (!informacionMaterial) {
+        return;
+    }
+
+    // Crear el detalle de docentes
+    let detalleDocentes = "";
+
+    material.docentes.forEach(function(docente) {
+
+        detalleDocentes += `
+            <p>
+                👤 ${docente.nombre}
+                → ${docente.cantidad} ${informacionMaterial.unidad}
+            </p>
+        `;
+
+    });
+
+    contenido.innerHTML += `
+
+        <div class="tarjeta-consolidado">
+
+            <img
+                src="${informacionMaterial.imagen}"
+                alt="${informacionMaterial.nombre}"
+            >
+
+            <div class="informacion-consolidado">
+
+                <h3>${informacionMaterial.nombre}</h3>
+
+                <p>
+                    <strong>Categoría:</strong>
+                    ${informacionMaterial.categoria}
+                </p>
+
+                <p>
+                    <strong>Descripción:</strong>
+                    ${informacionMaterial.descripcion}
+                </p>
+
+                <p>
+                    <strong>Uso general:</strong>
+                    ${informacionMaterial.uso}
+                </p>
+
+                <p>
+                    <strong>Unidad:</strong>
+                    ${informacionMaterial.unidad}
+                </p>
+
+                <p>
+                    <strong>🛒 Cantidad total necesaria:</strong>
+                    ${material.cantidad}
+                    ${informacionMaterial.unidad}
+                </p>
+
+                <hr>
+
+                <h4>👥 Detalle por docente</h4>
+
+                ${detalleDocentes}
+
+            </div>
+
+        </div>
+
+    `;
+
+});
+}
+
+
+function volverCarrito() {
+
+    document.getElementById("pantalla-consolidado").style.display = "none";
+
+    document.getElementById("pantalla-carrito").style.display = "block";
+
+}
+function exportarPedido() {
+
+    if (!carrito && !materiales) {
+        alert("❌ No hay información para exportar.");
+        return;
+    }
+
+    // Obtener nuevamente las solicitudes
+    supabaseClient
+        .from("solicitudes")
+        .select("*")
+        .then(function(resultado) {
+
+            const data = resultado.data;
+            const error = resultado.error;
+
+            if (error) {
+
+                console.error("Error al obtener solicitudes:", error);
+
+                alert("❌ No se pudo generar el pedido.");
+
+                return;
+            }
+
+            if (!data || data.length === 0) {
+
+                alert("📋 No hay solicitudes para exportar.");
+
+                return;
+            }
+
+            // ==============================
+            // CONSOLIDAR MATERIALES
+            // ==============================
+
+            const consolidado = {};
+
+            data.forEach(function(solicitud) {
+
+                const idMaterial = solicitud.material_id;
+
+                if (!consolidado[idMaterial]) {
+
+                    consolidado[idMaterial] = {
+                        id: solicitud.material_id,
+                        nombre: solicitud.material_nombre,
+                        categoria: solicitud.categoria,
+                        cantidad: 0,
+                        docentes: []
+                    };
+
+                }
+
+                consolidado[idMaterial].cantidad += solicitud.cantidad;
+
+                consolidado[idMaterial].docentes.push({
+                    nombre: solicitud.profesor_nombre,
+                    cantidad: solicitud.cantidad
+                });
+
+            });
+
+            // ==============================
+            // PREPARAR DATOS PARA EXCEL
+            // ==============================
+
+            const filas = [];
+
+            Object.values(consolidado).forEach(function(material) {
+
+                const informacionMaterial = materiales.find(function(item) {
+                    return item.id === material.id;
+                });
+
+                if (!informacionMaterial) {
+                    return;
+                }
+
+                filas.push({
+
+                    "Material":
+                        informacionMaterial.nombre,
+
+                    "Categoría":
+                        informacionMaterial.categoria,
+
+                    "Descripción":
+                        informacionMaterial.descripcion,
+
+                    "Uso general":
+                        informacionMaterial.uso,
+
+                    "Unidad":
+                        informacionMaterial.unidad,
+
+                    "Cantidad total":
+                        material.cantidad,
+
+                    "Imagen":
+                        informacionMaterial.imagen
+
+                });
+
+            });
+
+            // ==============================
+            // CREAR ARCHIVO EXCEL
+            // ==============================
+
+            const hoja = XLSX.utils.json_to_sheet(filas);
+
+            hoja["!cols"] = [
+                { wch: 25 },
+                { wch: 22 },
+                { wch: 60 },
+                { wch: 55 },
+                { wch: 15 },
+                { wch: 18 },
+                { wch: 45 }
+            ];
+
+            const libro = XLSX.utils.book_new();
+
+            XLSX.utils.book_append_sheet(
+                libro,
+                hoja,
+                "Pedido"
+            );
+
+            XLSX.writeFile(
+                libro,
+                "Pedido_materiales.xlsx"
+            );
+
+        });
 
 }
